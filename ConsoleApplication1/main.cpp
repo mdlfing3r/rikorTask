@@ -67,15 +67,15 @@ bool Finder(std::vector<uint64_t> array, uint64_t F1, uint64_t F2, uint64_t F3, 
 
     while ((iter = std::find(iter, array.end(), F2)) != array.end())
     {
-        if (iter > array.begin() && iter < array.end()) {
+        if (iter >= (array.begin() + (8192 - 2) * 8192)) return 0; 
 
-            if (*(iter + 8192) == F1) {
-                if (*(iter + (8192 * 2)) == F3) {
-                    Position.Ypos = (iter - array.begin()) / 8192;
-                    Position.Xpos = (iter - array.begin()) % 8192;
-                }
+        if (*(iter + 8192) == F1) {
+            if (*(iter + (8192 * 2)) == F3) {
+                Position.Ypos = (iter - array.begin()) / 8192;
+                Position.Xpos = (iter - array.begin()) % 8192;
             }
         }
+        
 
         iter++;
     }
