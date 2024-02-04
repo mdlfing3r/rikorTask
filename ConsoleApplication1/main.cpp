@@ -10,6 +10,9 @@
 #define maxVALUE 8388608
 #define VECTOR_CASE
 
+#define F2_MAX (8192 << 13)
+#define F3_OFFSET (8192 << 1)
+
 //геом прогрессия: Bi = b1*q^(i-1)
 
 typedef struct Coordinate {
@@ -67,12 +70,16 @@ bool Finder(std::vector<uint64_t> array, uint64_t F1, uint64_t F2, uint64_t F3, 
 
     while ((iter = std::find(iter, array.end(), F2)) != array.end())
     {
-        if (iter >= (array.begin() + (8192 - 2) * 8192)) return 0; 
+        if (iter >= (array.begin() + F2_MAX)) return 0;
 
         if (*(iter + 8192) == F1) {
-            if (*(iter + (8192 * 2)) == F3) {
-                Position.Ypos = (iter - array.begin()) / 8192;
-                Position.Xpos = (iter - array.begin()) % 8192;
+            if (*(iter + F3_OFFSET) == F3) {
+                Position.Ypos = ((iter - array.begin()) >> 13);
+                Position.Xpos = iter - array.begin();
+                while (Position.Xpos > 8192) {
+                    *&Position.Xpos = (iter - array.begin()) - 8192;
+                }
+                return 1;
             }
         }
         
@@ -80,7 +87,7 @@ bool Finder(std::vector<uint64_t> array, uint64_t F1, uint64_t F2, uint64_t F3, 
         iter++;
     }
 
-    return 1;
+    return 1;//недостижимое условие
 }
 
 
